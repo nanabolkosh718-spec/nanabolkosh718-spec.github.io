@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartLink - 遇见你的心动瞬间</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Noto Sans SC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                        },
+                        romantic: {
+                            light: '#fff1f2',
+                            DEFAULT: '#fb7185',
+                            dark: '#e11d48'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Noto Sans SC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 50%, #c084fc 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+        .animate-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800 overflow-x-hidden">
+
+    <!-- 顶部导航栏 -->
+    <header class="glass-nav sticky top-0 z-50 px-4 py-3 shadow-sm transition-all">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2 cursor-pointer" onclick="switchTab('explore')">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-pink-500/30 animate-glow">
+                    <i class="fa-solid fa-heart text-xl"></i>
+                </div>
+                <span class="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent tracking-wide">HeartLink</span>
+            </div>
+
+            <!-- 桌面端导航菜单 -->
+            <nav class="hidden md:flex items-center space-x-1 bg-white/50 p-1.5 rounded-full border border-white/60 shadow-inner">
+                <button onclick="switchTab('explore')" id="nav-explore" class="px-5 py-2 rounded-full font-medium text-sm transition-all bg-pink-500 text-white shadow-md shadow-pink-500/20">
+                    <i class="fa-solid fa-compass mr-1.5"></i> 探索心动
+                </button>
+                <button onclick="switchTab('matches')" id="nav-matches" class="px-5 py-2 rounded-full font-medium text-sm text-slate-600 hover:text-pink-600 transition-all relative">
+                    <i class="fa-solid fa-comments mr-1.5"></i> 消息聊天
+                    <span id="unread-badge" class="absolute top-1.5 right-2 w-2 h-2 bg-pink-500 rounded-full hidden"></span>
+                </button>
+                <button onclick="switchTab('profile')" id="nav-profile" class="px-5 py-2 rounded-full font-medium text-sm text-slate-600 hover:text-pink-600 transition-all">
+                    <i class="fa-solid fa-user-gear mr-1.5"></i> 个人中心
+                </button>
+            </nav>
+
+            <!-- 快捷操作区 -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-1 bg-white/80 px-3 py-1.5 rounded-full shadow-sm border border-pink-100 text-xs font-semibold text-pink-600">
+                    <i class="fa-solid fa-fire text-amber-500 mr-1"></i>
+                    <span id="header-likes-count">0</span> 喜欢数
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col justify-center relative pb-20 md:pb-6">
+
+        <!-- ================= tab 1: 探索卡片流 ================= -->
+        <section id="tab-explore" class="tab-content flex-1 flex flex-col items-center justify-center w-full max-w-md mx-auto relative">
+            <div id="card-stack" class="w-full h-[520px] relative flex items-center justify-center">
+                <!-- 动态生成卡片挂载点 -->
+                <div id="empty-cards" class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 glass-card rounded-3xl shadow-xl hidden">
+                    <div class="w-20 h-20 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner">
+                        <i class="fa-solid fa-seedling animate-bounce"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">暂时没有更多心动对象啦</h3>
+                    <p class="text-slate-500 text-sm mb-6">休息一会儿，或者重置探索记录来看看新的朋友吧！</p>
+                    <button onclick="resetDiscovery()" class="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium rounded-full shadow-lg shadow-pink-500/30 hover:opacity-90 transition-all transform active:scale-95">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> 重新发现缘分
+                    </button>
+                </div>
+            </div>
+
+            <!-- 滑动操作控制按钮 -->
+            <div id="card-actions" class="flex items-center justify-center space-x-6 mt-6 w-full">
+                <button onclick="handleSwipe('left')" class="w-16 h-16 rounded-full bg-white shadow-lg border border-slate-100 text-slate-400 hover:text-rose-500 hover:border-rose-200 flex items-center justify-center text-2xl transition-all transform hover:scale-110 active:scale-95 shadow-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button onclick="handleSuperLike()" class="w-12 h-12 rounded-full bg-white shadow-lg border border-slate-100 text-amber-400 hover:text-amber-500 flex items-center justify-center text-xl transition-all transform hover:scale-110 active:scale-95 shadow-slate-200">
+                    <i class="fa-solid fa-star"></i>
+                </button>
+                <button onclick="handleSwipe('right')" class="w-16 h-16 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 text-white shadow-xl shadow-pink-500/30 flex items-center justify-center text-2xl transition-all transform hover:scale-110 active:scale-95">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= tab 2: 聊天消息页面 ================= -->
+        <section id="tab-matches" class="tab-content hidden flex-1 w-full h-[calc(100vh-130px)] md:h-[600px] glass-card rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/60">
+            <!-- 匹配/聊天列表侧边栏 -->
+            <div id="chat-sidebar" class="w-full md:w-80 bg-white/60 border-r border-pink-100 flex flex-col h-full">
+                <div class="p-4 border-b border-pink-100 flex items-center justify-between">
+                    <h2 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-heart-pulse text-pink-500 mr-2"></i>心动匹配</h2>
+                    <span class="text-xs bg-pink-100 text-pink-600 px-2.5 py-1 rounded-full font-semibold" id="match-count-badge">0人</span>
+                </div>
+                <!-- 匹配头像横向滚动区 -->
+                <div class="p-3 border-b border-pink-100 overflow-x-auto hide-scrollbar">
+                    <div id="matches-avatar-list" class="flex space-x-3">
+                        <!-- 动态渲染匹配头像 -->
+                    </div>
+                </div>
+                <!-- 消息列表 -->
+                <div id="chat-list-container" class="flex-1 overflow-y-auto divide-y divide-pink-50/50">
+                    <!-- 动态渲染消息会话 -->
+                </div>
+            </div>
+
+            <!-- 聊天对话框区域 -->
+            <div id="chat-main-area" class="hidden md:flex flex-1 flex-col h-full bg-white/40">
+                <!-- 聊天头部 -->
+                <div class="p-4 bg-white/70 border-b border-pink-100 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="backToChatList()" class="md:hidden text-slate-500 text-lg mr-1"><i class="fa-solid fa-arrow-left"></i></button>
+                        <img id="active-chat-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover shadow-md border-2 border-white">
+                        <div>
+                            <h3 id="active-chat-name" class="font-bold text-slate-800 text-sm leading-tight">请选择聊天对象</h3>
+                            <span id="active-chat-status" class="text-xs text-emerald-500 flex items-center"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block mr-1"></span>在线</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 text-slate-500">
+                        <button onclick="clearCurrentChat()" title="清空聊天记录" class="hover:text-pink-600 transition-colors"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                </div>
+                <!-- 消息展示区 -->
+                <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col">
+                    <div class="m-auto text-center text-slate-400 text-sm">
+                        <i class="fa-regular fa-comments text-3xl mb-2 text-pink-300"></i>
+                        <p>点击左侧列表，开始一段美好的对话吧~</p>
+                    </div>
+                </div>
+                <!-- 发送消息输入框 -->
+                <div class="p-3 bg-white/70 border-t border-pink-100 flex items-center space-x-2">
+                    <input type="text" id="chat-input" onkeypress="handleChatKeyPress(event)" placeholder="发送一句甜蜜的话..." class="flex-1 bg-white/80 border border-pink-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 text-slate-700 shadow-inner">
+                    <button onclick="sendChatMessage()" class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white flex items-center justify-center shadow-md shadow-pink-500/20 hover:opacity-90 transition-all">
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= tab 3: 个人中心 / 资料设置 ================= -->
+        <section id="tab-profile" class="tab-content hidden flex-1 w-full max-w-lg mx-auto glass-card rounded-3xl shadow-2xl p-6 overflow-y-auto border border-white/60">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-user-pen text-pink-500 mr-2"></i>个人名片设置
+                </h2>
+                <button onclick="saveProfile()" class="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-semibold rounded-full shadow-md shadow-pink-500/20 hover:opacity-90 transition-all">
+                    保存修改
+                </button>
+            </div>
+
+            <!-- 头像预览及更换 -->
+            <div class="flex flex-col items-center mb-6">
+                <div class="relative group">
+                    <img id="profile-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="My Avatar" class="w-28 h-28 rounded-full object-cover shadow-lg border-4 border-white">
+                    <label class="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        <i class="fa-solid fa-camera text-lg mb-1"></i>
+                        <span class="text-xs">更换头像</span>
+                        <input type="file" accept="image/*" onchange="handleAvatarUpload(event)" class="hidden">
+                    </label>
+                </div>
+                <p class="text-xs text-slate-400 mt-2">支持本地上传或使用下方预设头像URL</p>
+            </div>
+
+            <!-- 资料表单 -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">昵称 / 名字</label>
+                    <input type="text" id="profile-name" class="w-full bg-white/80 border border-pink-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 text-slate-700 shadow-inner">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">年龄</label>
+                        <input type="number" id="profile-age" class="w-full bg-white/80 border border-pink-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 text-slate-700 shadow-inner">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">城市</label>
+                        <input type="text" id="profile-city" class="w-full bg-white/80 border border-pink-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 text-slate-700 shadow-inner">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">个性签名 / 简介</label>
+                    <textarea id="profile-bio" rows="3" class="w-full bg-white/80 border border-pink-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 text-slate-700 shadow-inner resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">头像图片直链 (URL)</label>
+                    <input type="text" id="profile-avatar-url" placeholder="https://..." class="w-full bg-white/80 border border-pink-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 text-slate-700 shadow-inner">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-2 uppercase tracking-wider">我的兴趣标签 (点击切换)</label>
+                    <div id="profile-tags-container" class="flex flex-wrap gap-2">
+                        <!-- 兴趣标签 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 移动端底部导航栏 -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t border-white/60 p-2 flex justify-around items-center z-50">
+        <button onclick="switchTab('explore')" id="mobile-nav-explore" class="flex flex-col items-center text-pink-600 px-4 py-1">
+            <i class="fa-solid fa-compass text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">探索</span>
+        </button>
+        <button onclick="switchTab('matches')" id="mobile-nav-matches" class="flex flex-col items-center text-slate-400 px-4 py-1 relative">
+            <i class="fa-solid fa-comments text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">消息</span>
+            <span id="mobile-unread-badge" class="absolute top-1 right-3 w-2 h-2 bg-pink-500 rounded-full hidden"></span>
+        </button>
+        <button onclick="switchTab('profile')" id="mobile-nav-profile" class="flex flex-col items-center text-slate-400 px-4 py-1">
+            <i class="fa-solid fa-user-gear text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">我的</span>
+        </button>
+    </nav>
+
+    <!-- 匹配成功弹窗 (Match Modal) -->
+    <div id="match-modal" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="glass-card max-w-sm w-full rounded-3xl p-6 text-center transform scale-95 transition-transform duration-300 shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-pink-400/20 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-purple-400/20 rounded-full blur-2xl"></div>
+
+            <div class="w-16 h-16 bg-gradient-to-tr from-pink-500 to-purple-600 text-white rounded-full flex items-center justify-center text-2xl mx-auto mb-4 shadow-lg shadow-pink-500/30 animate-bounce">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <h2 class="text-2xl font-black bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-1">匹配成功！</h2>
+            <p class="text-sm text-slate-500 mb-6">你和 <span id="match-modal-name" class="font-bold text-slate-700"></span> 互相喜欢对方，开始一段美妙的缘分吧~</p>
+
+            <!-- 匹配双方头像视觉交融 -->
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <img id="match-modal-my-avatar" src="" alt="My Avatar" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md">
+                <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-500 flex items-center justify-center text-sm shadow-inner"><i class="fa-solid fa-plus"></i></div>
+                <img id="match-modal-target-avatar" src="" alt="Target Avatar" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md">
+            </div>
+
+            <div class="space-y-2">
+                <button onclick="startChatFromModal()" class="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-full shadow-lg shadow-pink-500/30 hover:opacity-90 transition-all">
+                    <i class="fa-solid fa-comment-dots mr-2"></i> 发送消息聊天
+                </button>
+                <button onclick="closeMatchModal()" class="w-full py-2.5 bg-white/80 text-slate-600 font-semibold rounded-full hover:bg-white transition-all text-sm border border-pink-100">
+                    继续探索
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 核心逻辑 -->
+    <script>
+        // 初始候选人数据池
+        const defaultCandidates = [
+            {
+                id: 1,
+                name: "晓萱",
+                age: 23,
+                city: "上海",
+                bio: "热爱摄影和手标咖啡，寻找周末一起去看艺术展的那个他。咖啡不加糖，但生活需要一点甜。",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+                tags: ["摄影", "咖啡", "艺术展", "猫奴"]
+            },
+            {
+                id: 2,
+                name: "Ethan",
+                age: 26,
+                city: "北京",
+                bio: "科技公司产品经理，周末喜欢重度徒步、看科幻电影和弹吉他。希望能遇到同样有趣灵魂。",
+                avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80",
+                tags: ["吉他", "徒步", "科幻", "美食"]
+            },
+            {
+                id: 3,
+                name: "Luna",
+                age: 22,
+                city: "深圳",
+                bio: "独立插画师 🎨。猫咪控，喜欢逛中古店和深夜电台。期待一段温柔真诚的陪伴。",
+                avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
+                tags: ["插画", "猫奴", "中古", "深夜电台"]
+            },
+            {
+                id: 4,
+                name: "Liam",
+                age: 25,
+                city: "杭州",
+                bio: "独立音乐人 & 自由职业。西湖边长大的文艺青年，向往诗和远方，也爱烟火人间。",
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+                tags: ["音乐", "旅行", "民谣", "露营"]
+            },
+            {
+                id: 5,
+                name: "Chloe",
+                age: 24,
+                city: "成都",
+                bio: "热爱甜点烘焙的狮子座女孩。喜欢分享生活小确幸，希望能一起去吃火锅和小龙虾！",
+                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80",
+                tags: ["烘焙", "火锅", "萌宠", "电影"]
+            }
+        ];
+
+        // 可供选择的兴趣标签池
+        const allAvailableTags = ["摄影", "咖啡", "艺术展", "猫奴", "吉他", "徒步", "科幻", "美食", "插画", "中古", "音乐", "旅行", "民谣", "露营", "烘焙", "火锅", "电影", "健身", "读书", "瑜伽"];
+
+        // 自动智能回复预置语
+        const autoReplies = [
+            "哇，好巧呀！我也觉得很有意思 😊",
+            "真的吗？下次有机会一起去尝试呀！",
+            "哈哈，你平时也喜欢这个风格吗？",
+            "今天天气很好，希望你的心情也像阳光一样灿烂~ ☀️",
+            "我觉得你说的非常有道理诶！",
+            "正在听歌呢，你呢？有什么推荐的歌曲吗 🎶"
+        ];
+
+        // 本地应用状态
+        let state = {
+            profile: {
+                name: "星野",
+                age: 23,
+                city: "上海",
+                bio: "热爱生活，向往浪漫。寻找志同道合的那个TA✨",
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=600&q=80",
+                tags: ["摄影", "旅行", "音乐", "咖啡"]
+            },
+            candidates: [],
+            swipedIds: [], // 已滑动过的候选人ID
+            matches: [],   // 匹配成功的候选人列表 [{...candidate, chatId}]
+            chats: {},     // 聊天记录 { matchId: [ {sender: 'me'|'ta', text: '...', time: '...'} ] }
+            currentChatId: null,
+            likesCount: 0
+        };
+
+        // 初始化加载
+        window.onload = function() {
+            loadFromLocalStorage();
+            initProfileUI();
+            initCandidates();
+            renderExploreCard();
+            renderMatchesList();
+            updateLikesCountBadge();
+        };
+
+        // 读取 LocalStorage
+        function loadFromLocalStorage() {
+            const savedState = localStorage.getItem('heartlink_state_v1');
+            if (savedState) {
+                try {
+                    const parsed = JSON.parse(savedState);
+                    state = { ...state, ...parsed };
+                } catch(e) {
+                    console.error("Failed to parse saved state", e);
+                }
+            } else {
+                // 默认赠送一个匹配以便初次体验
+                state.candidates = defaultCandidates;
+                state.matches = [
+                    {
+                        ...defaultCandidates[0],
+                        chatId: 'match_1'
+                    }
+                ];
+                state.chats = {
+                    'match_1': [
+                        { sender: 'ta', text: "嗨！很高兴在 HeartLink 遇见你~ ✨", time: "10:00" },
+                        { sender: 'me', text: "你好呀！很高兴认识你，周末一般喜欢做些什么呢？", time: "10:02" },
+                        { sender: 'ta', text: "我经常去看展或者拍拍照，你呢？", time: "10:05" }
+                    ]
+                };
+                state.likesCount = 3;
+                saveToLocalStorage();
+            }
+        }
+
+        // 写入 LocalStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('heartlink_state_v1', JSON.stringify(state));
+        }
+
+        // 页面切换控制
+        function switchTab(tabName) {
+            ['explore', 'matches', 'profile'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                
+                // 桌面端导航样式重置
+                const navBtn = document.getElementById(`nav-${t}`);
+                if (navBtn) {
+                    navBtn.className = "px-5 py-2 rounded-full font-medium text-sm text-slate-600 hover:text-pink-600 transition-all relative";
+                }
+                // 移动端导航样式重置
+                const mobBtn = document.getElementById(`mobile-nav-${t}`);
+                if (mobBtn) {
+                    mobBtn.className = "flex flex-col items-center text-slate-400 px-4 py-1 relative";
+                }
+            });
+
+            // 激活当前标签
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                activeNav.className = "px-5 py-2 rounded-full font-medium text-sm bg-pink-500 text-white shadow-md shadow-pink-500/20 relative";
+            }
+            const activeMob = document.getElementById(`mobile-nav-${tabName}`);
+            if (activeMob) {
+                activeMob.className = "flex flex-col items-center text-pink-600 px-4 py-1 relative";
+            }
+
+            if (tabName === 'matches') {
+                renderMatchesList();
+            }
+        }
+
+        // 初始化候选人过滤已滑过的
+        function initCandidates() {
+            if (!state.candidates || state.candidates.length === 0) {
+                state.candidates = defaultCandidates;
+            }
+        }
+
+        // 渲染当前探索卡片
+        function renderExploreCard() {
+            const stack = document.getElementById('card-stack');
+            const emptyEl = document.getElementById('empty-cards');
+            const actionsEl = document.getElementById('card-actions');
+
+            // 过滤未滑过的候选人
+            const available = state.candidates.filter(c => !state.swipedIds.includes(c.id));
+
+            // 清除旧卡片
+            const oldCards = stack.querySelectorAll('.swipe-card');
+            oldCards.forEach(c => c.remove());
+
+            if (available.length === 0) {
+                emptyEl.classList.remove('hidden');
+                actionsEl.classList.add('hidden');
+                return;
+            }
+
+            emptyEl.classList.add('hidden');
+            actionsEl.classList.remove('hidden');
+
+            // 取出顶部候选人
+            const candidate = available[0];
+
+            const card = document.createElement('div');
+            card.className = "swipe-card absolute inset-0 glass-card rounded-3xl shadow-2xl overflow-hidden flex flex-col cursor-grab active:cursor-grabbing transition-transform duration-300 border border-white/80";
+            card.innerHTML = `
+                <div class="relative w-full h-[360px]">
+                    <img src="${candidate.avatar}" alt="${candidate.name}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-5 text-white">
+                        <div class="flex items-baseline space-x-2">
+                            <h2 class="text-2xl font-bold tracking-tight">${candidate.name}</h2>
+                            <span class="text-lg font-light opacity-90">${candidate.age}</span>
+                        </div>
+                        <p class="text-xs text-pink-200 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${candidate.city}</p>
+                    </div>
+                </div>
+                <div class="p-4 flex-1 flex flex-col justify-between bg-white/60">
+                    <p class="text-slate-600 text-sm line-clamp-2">${candidate.bio}</p>
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        ${candidate.tags.map(tag => `<span class="px-2.5 py-1 bg-pink-100/80 text-pink-600 rounded-full text-xs font-semibold">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            stack.appendChild(card);
+            
+            // 绑定拖拽/滑动交互
+            initSwipeGesture(card, candidate);
+        }
+
+        // 处理卡片滑动
+        function handleSwipe(direction) {
+            const available = state.candidates.filter(c => !state.swipedIds.includes(c.id));
+            if (available.length === 0) return;
+            const candidate = available[0];
+
+            state.swipedIds.push(candidate.id);
+
+            const card = document.querySelector('.swipe-card');
+            if (card) {
+                const flyX = direction === 'right' ? 400 : -400;
+                card.style.transform = `translate(${flyX}px, 50px) rotate(${direction === 'right' ? 25 : -25}deg)`;
+                card.style.opacity = '0';
+            }
+
+            setTimeout(() => {
+                if (direction === 'right') {
+                    // 模拟喜欢，触发匹配成功判定（70%概率或第一个直接成功）
+                    state.likesCount += 1;
+                    updateLikesCountBadge();
+                    triggerMatch(candidate);
+                }
+                saveToLocalStorage();
+                renderExploreCard();
+            }, 300);
+        }
+
+        // 超级喜欢
+        function handleSuperLike() {
+            state.likesCount += 3;
+            updateLikesCountBadge();
+            handleSwipe('right');
+        }
+
+        // 触发匹配成功弹窗
+        let pendingMatchCandidate = null;
+        function triggerMatch(candidate) {
+            pendingMatchCandidate = candidate;
+            
+            // 检查是否已在匹配列表中
+            const existing = state.matches.find(m => m.id === candidate.id);
+            if (!existing) {
+                const chatId = 'match_' + Date.now();
+                state.matches.unshift({ ...candidate, chatId });
+                state.chats[chatId] = [
+                    { sender: 'ta', text: `嗨！很高兴与你互相喜欢，快来和我说说话吧~ 😊`, time: getCurrentTime() }
+                ];
+                saveToLocalStorage();
+            }
+
+            // 弹出提示框
+            document.getElementById('match-modal-name').innerText = candidate.name;
+            document.getElementById('match-modal-my-avatar').src = state.profile.avatar;
+            document.getElementById('match-modal-target-avatar').src = candidate.avatar;
+
+            const modal = document.getElementById('match-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.glass-card').classList.remove('scale-95');
+            modal.querySelector('.glass-card').classList.add('scale-100');
+        }
+
+        function closeMatchModal() {
+            const modal = document.getElementById('match-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('.glass-card').classList.remove('scale-100');
+            modal.querySelector('.glass-card').classList.add('scale-95');
+        }
+
+        function startChatFromModal() {
+            closeMatchModal();
+            switchTab('matches');
+            if (pendingMatchCandidate) {
+                const matchObj = state.matches.find(m => m.id === pendingMatchCandidate.id);
+                if (matchObj) {
+                    openChat(matchObj.chatId);
+                }
+            }
+        }
+
+        // 重置探索
+        function resetDiscovery() {
+            state.swipedIds = [];
+            saveToLocalStorage();
+            renderExploreCard();
+        }
+
+        // 渲染匹配与聊天页面
+        function renderMatchesList() {
+            const avatarListEl = document.getElementById('matches-avatar-list');
+            const chatListEl = document.getElementById('chat-list-container');
+            const countBadge = document.getElementById('match-count-badge');
+
+            countBadge.innerText = state.matches.length + "人";
+
+            // 渲染横向匹配头像
+            avatarListEl.innerHTML = state.matches.map(m => `
+                <div onclick="openChat('${m.chatId}')" class="flex flex-col items-center cursor-pointer flex-shrink-0 group">
+                    <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-pink-500 to-purple-600 shadow-md group-hover:scale-105 transition-transform">
+                        <img src="${m.avatar}" alt="${m.name}" class="w-full h-full rounded-full object-cover border-2 border-white">
+                    </div>
+                    <span class="text-xs font-medium text-slate-700 mt-1 truncate w-16 text-center">${m.name}</span>
+                </div>
+            `).join('');
+
+            // 渲染会话列表
+            if (state.matches.length === 0) {
+                chatListEl.innerHTML = `
+                    <div class="p-8 text-center text-slate-400 text-sm">
+                        <p>还没有匹配对象，快去“探索心动”喜欢心仪的人吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            chatListEl.innerHTML = state.matches.map(m => {
+                const messages = state.chats[m.chatId] || [];
+                const lastMsg = messages.length > 0 ? messages[messages.length - 1].text : "暂无消息";
+                const isSelected = state.currentChatId === m.chatId;
+
+                return `
+                    <div onclick="openChat('${m.chatId}')" class="p-3.5 flex items-center space-x-3 cursor-pointer hover:bg-white/60 transition-colors ${isSelected ? 'bg-pink-50/80 border-l-4 border-pink-500' : ''}">
+                        <img src="${m.avatar}" alt="${m.name}" class="w-12 h-12 rounded-full object-cover shadow-sm border border-white">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between mb-0.5">
+                                <h4 class="font-bold text-slate-800 text-sm truncate">${m.name}</h4>
+                                <span class="text-[10px] text-slate-400">${m.city}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 truncate">${lastMsg}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 打开聊天
+        function openChat(chatId) {
+            state.currentChatId = chatId;
+            const matchObj = state.matches.find(m => m.chatId === chatId);
+            if (!matchObj) return;
+
+            // 移动端切换聊天主界面显示
+            const chatMain = document.getElementById('chat-main-area');
+            const chatSidebar = document.getElementById('chat-sidebar');
+            chatMain.classList.remove('hidden');
+            if (window.innerWidth < 768) {
+                chatSidebar.classList.add('hidden');
+            }
+
+            document.getElementById('active-chat-avatar').src = matchObj.avatar;
+            document.getElementById('active-chat-name').innerText = matchObj.name;
+
+            renderChatMessages();
+            renderMatchesList(); // 更新高亮
+        }
+
+        function backToChatList() {
+            const chatMain = document.getElementById('chat-main-area');
+            const chatSidebar = document.getElementById('chat-sidebar');
+            chatMain.classList.add('hidden');
+            chatSidebar.classList.remove('hidden');
+        }
+
+        // 渲染当前聊天对话消息
+        function renderChatMessages() {
+            const container = document.getElementById('chat-messages');
+            if (!state.currentChatId) return;
+
+            const messages = state.chats[state.currentChatId] || [];
+
+            container.innerHTML = messages.map(msg => {
+                const isMe = msg.sender === 'me';
+                return `
+                    <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+                        <div class="max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-br-none' : 'bg-white/80 text-slate-700 border border-pink-100 rounded-bl-none'}">
+                            <p>${msg.text}</p>
+                            <span class="block text-[9px] text-right mt-1 opacity-70">${msg.time}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // 发送聊天消息
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || !state.currentChatId) return;
+
+            if (!state.chats[state.currentChatId]) {
+                state.chats[state.currentChatId] = [];
+            }
+
+            // 添加我的消息
+            state.chats[state.currentChatId].push({
+                sender: 'me',
+                text: text,
+                time: getCurrentTime()
+            });
+
+            input.value = '';
+            renderChatMessages();
+            renderMatchesList();
+            saveToLocalStorage();
+
+            // 模拟对方在 1.5 秒后自动回复
+            setTimeout(() => {
+                const randomReply = autoReplies[Math.floor(Math.random() * autoReplies.length)];
+                state.chats[state.currentChatId].push({
+                    sender: 'ta',
+                    text: randomReply,
+                    time: getCurrentTime()
+                });
+                renderChatMessages();
+                renderMatchesList();
+                saveToLocalStorage();
+            }, 1500);
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function clearCurrentChat() {
+            if (!state.currentChatId) return;
+            state.chats[state.currentChatId] = [];
+            renderChatMessages();
+            renderMatchesList();
+            saveToLocalStorage();
+        }
+
+        // 初始化个人中心 UI
+        function initProfileUI() {
+            document.getElementById('profile-name').value = state.profile.name;
+            document.getElementById('profile-age').value = state.profile.age;
+            document.getElementById('profile-city').value = state.profile.city;
+            document.getElementById('profile-bio').value = state.profile.bio;
+            document.getElementById('profile-avatar-url').value = state.profile.avatar;
+            document.getElementById('profile-avatar-preview').src = state.profile.avatar;
+
+            renderProfileTags();
+        }
+
+        // 渲染个人兴趣标签选择区
+        function renderProfileTags() {
+            const container = document.getElementById('profile-tags-container');
+            container.innerHTML = allAvailableTags.map(tag => {
+                const isSelected = state.profile.tags.includes(tag);
+                return `
+                    <button type="button" onclick="toggleProfileTag('${tag}')" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${isSelected ? 'bg-pink-500 text-white shadow-sm shadow-pink-500/20' : 'bg-white/80 text-slate-600 border border-pink-100 hover:border-pink-300'}">
+                        ${tag}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function toggleProfileTag(tag) {
+            const idx = state.profile.tags.indexOf(tag);
+            if (idx > -1) {
+                state.profile.tags.splice(idx, 1);
+            } else {
+                if (state.profile.tags.length >= 6) {
+                    alertBox("最多只能选择 6 个兴趣标签哦！");
+                    return;
+                }
+                state.profile.tags.push(tag);
+            }
+            renderProfileTags();
+        }
+
+        // 保存个人资料
+        function saveProfile() {
+            state.profile.name = document.getElementById('profile-name').value.trim() || "星野";
+            state.profile.age = parseInt(document.getElementById('profile-age').value) || 20;
+            state.profile.city = document.getElementById('profile-city').value.trim() || "上海";
+            state.profile.bio = document.getElementById('profile-bio').value.trim() || "热爱生活";
+            
+            const urlInput = document.getElementById('profile-avatar-url').value.trim();
+            if (urlInput) {
+                state.profile.avatar = urlInput;
+                document.getElementById('profile-avatar-preview').src = urlInput;
+            }
+
+            saveToLocalStorage();
+            alertBox("个人名片修改保存成功！✨");
+        }
+
+        // 头像本地文件上传处理
+        function handleAvatarUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    state.profile.avatar = event.target.result;
+                    document.getElementById('profile-avatar-preview').src = event.target.result;
+                    document.getElementById('profile-avatar-url').value = event.target.result;
+                    saveToLocalStorage();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 更新点赞/喜欢数统计显示
+        function updateLikesCountBadge() {
+            document.getElementById('header-likes-count').innerText = state.likesCount;
+        }
+
+        // 工具函数：获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            return `${hours}:${mins}`;
+        }
+
+        // 自定义非阻塞提示框替代 alert
+        function alertBox(message) {
+            const div = document.createElement('div');
+            div.className = "fixed top-6 left-1/2 transform -translate-x-1/2 bg-slate-900/90 text-white px-6 py-3 rounded-2xl shadow-2xl z-50 text-sm flex items-center space-x-2 backdrop-blur-md animate-bounce";
+            div.innerHTML = `<i class="fa-solid fa-circle-check text-pink-400 mr-1"></i> ${message}`;
+            document.body.appendChild(div);
+            setTimeout(() => {
+                div.remove();
+            }, 2500);
+        }
+
+        // 简易卡片拖拽手势支持 (鼠标 & 触屏)
+        function initSwipeGesture(card, candidate) {
+            let startX = 0, currentX = 0, isDragging = false;
+
+            card.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                card.style.transition = 'none';
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                currentX = e.clientX - startX;
+                const rotate = currentX * 0.05;
+                card.style.transform = `translate(${currentX}px, ${Math.abs(currentX)*0.1}px) rotate(${rotate}deg)`;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+                if (currentX > 100) {
+                    handleSwipe('right');
+                } else if (currentX < -100) {
+                    handleSwipe('left');
+                } else {
+                    card.style.transform = 'translate(0px, 0px) rotate(0deg)';
+                }
+                currentX = 0;
+            });
+
+            // 移动端 Touch 事件
+            card.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                card.style.transition = 'none';
+            });
+
+            card.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                currentX = e.touches[0].clientX - startX;
+                const rotate = currentX * 0.05;
+                card.style.transform = `translate(${currentX}px, ${Math.abs(currentX)*0.1}px) rotate(${rotate}deg)`;
+            });
+
+            card.addEventListener('touchend', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+                if (currentX > 80) {
+                    handleSwipe('right');
+                } else if (currentX < -80) {
+                    handleSwipe('left');
+                } else {
+                    card.style.transform = 'translate(0px, 0px) rotate(0deg)';
+                }
+                currentX = 0;
+            });
+        }
+    </script>
+</body>
+</html>
