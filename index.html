@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>加载中...</title>
+    <title>Loading...</title>
     <!-- 1. 引入 Cloudflare Turnstile 官方 JS 库 -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <style>
@@ -34,7 +34,7 @@
 <body>
 
     <div id="content">
-        <h2>正在初始化页面...</h2>
+        <h2>Initializing page...</h2>
         <div class="loader"></div>
     </div>
 
@@ -86,7 +86,7 @@
             } catch (e) {
                 console.error("初始化出错", e);
                 // 接口挂了时默认当普通访客处理，留在当前页
-                document.getElementById('content').innerHTML = "<h3>欢迎访问本站！</h3>";
+                document.getElementById('content').innerHTML = "<h3>Welcome to this site!</h3>";
             }
         }
 
