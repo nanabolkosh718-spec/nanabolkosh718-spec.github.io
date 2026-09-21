@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamLove VIP - Descarga la App de Transmisiones en Vivo y Citas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.05); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .animate-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-rose-500 selection:text-white">
+
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 via-pink-500 to-purple-600 flex items-center justify-center shadow-lg shadow-rose-500/30">
+                    <i data-lucide="heart" class="w-6 h-6 text-white fill-white/20 animate-pulse"></i>
+                </div>
+                <span class="text-xl font-extrabold bg-gradient-to-r from-white via-slate-200 to-rose-400 bg-clip-text text-transparent">StreamLove</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#beneficios" class="hover:text-rose-400 transition">Beneficios VIP</a>
+                <a href="#caracteristicas" class="hover:text-rose-400 transition">Funciones</a>
+                <a href="#instrucciones" class="hover:text-rose-400 transition">Instalación</a>
+            </div>
+            <div>
+                <a href="#descargar" class="relative group inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm text-white bg-gradient-to-r from-rose-500 to-pink-600 shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Descargar App</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative overflow-hidden pt-12 pb-24 lg:pt-20 lg:pb-32">
+        <!-- Glowing background gradient blobs -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-rose-600/20 via-pink-600/20 to-purple-600/20 rounded-full blur-[120px] pointer-events-none animate-glow"></div>
+        <div class="absolute top-10 right-10 w-72 h-72 bg-purple-600/10 rounded-full blur-[90px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Promo Badge -->
+            <div class="flex justify-center mb-6">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm font-semibold tracking-wide shadow-inner">
+                    <span class="flex h-2 w-2 rounded-full bg-rose-500 animate-ping"></span>
+                    <span>🎉 ¡Promoción Especial Limitada!</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Hero Content -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1]">
+                        Conecta, chatea y haz videollamadas con <span class="bg-gradient-to-r from-rose-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">streamers en directo</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-300 mb-8 max-w-2xl mx-auto lg:mx-0 font-normal">
+                        Descarga y actualiza la aplicación para obtener <span class="text-rose-400 font-bold underline decoration-rose-500/50">3 meses de VIP gratis</span>. Disfruta de contenido exclusivo y llamadas sin límites.
+                    </p>
+
+                    <!-- Urgent Countdown Banner -->
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 mb-8 max-w-md mx-auto lg:mx-0 backdrop-blur-sm shadow-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs uppercase tracking-wider text-rose-400 font-bold flex items-center gap-1.5">
+                                <i data-lucide="timer" class="w-4 h-4"></i> El bono VIP expira en:
+                            </span>
+                            <span id="countdown" class="text-sm font-mono font-bold text-white bg-rose-950/60 px-2.5 py-1 rounded-md border border-rose-800/50">02:45:30</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-rose-500 to-pink-500 h-2 rounded-full w-3/4 animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Download Buttons -->
+                    <div id="descargar" class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <button onclick="triggerDownload('Android')" class="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-lg text-white group transition transform hover:-translate-y-0.5">
+                            <i data-lucide="smartphone" class="w-7 h-7 text-rose-400 group-hover:scale-110 transition"></i>
+                            <div class="text-left">
+                                <div class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Descargar para</div>
+                                <div class="text-base font-bold text-white">Android (APK)</div>
+                            </div>
+                        </button>
+
+                        <button onclick="triggerDownload('Google Play')" class="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-lg text-white group transition transform hover:-translate-y-0.5">
+                            <i data-lucide="play-circle" class="w-7 h-7 text-emerald-400 group-hover:scale-110 transition"></i>
+                            <div class="text-left">
+                                <div class="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">Disponible en</div>
+                                <div class="text-base font-bold text-white">Google Play</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <p class="text-xs text-slate-500 mt-4 flex items-center justify-center lg:justify-start gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Aplicación 100% segura y verificada. Sin virus.
+                    </p>
+                </div>
+
+                <!-- Hero Phone Mockup Preview -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-[280px] sm:w-[320px] h-[580px] bg-slate-900 rounded-[45px] p-4 border-[8px] border-slate-800 shadow-2xl shadow-rose-950/50 animate-float">
+                        <!-- Phone Notch & Speaker -->
+                        <div class="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-5 bg-slate-950 rounded-full z-20"></div>
+                        
+                        <!-- Screen Content -->
+                        <div class="w-full h-full bg-slate-950 rounded-[33px] overflow-hidden relative flex flex-col justify-between p-4 pt-8">
+                            <!-- Background streamer image -->
+                            <div class="absolute inset-0 z-0">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Streamer" class="w-full h-full object-cover opacity-70">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                            </div>
+
+                            <!-- Top bar in mockup -->
+                            <div class="relative z-10 flex items-center justify-between">
+                                <div class="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                                    <span class="text-xs font-bold text-white">EN VIVO</span>
+                                </div>
+                                <span class="bg-rose-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow">VIP 3 MESES</span>
+                            </div>
+
+                            <!-- Bottom streamer details & chat -->
+                            <div class="relative z-10 space-y-3">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-white font-bold text-lg">Sofía, 23</h3>
+                                        <span class="bg-purple-600 text-white text-[10px] px-1.5 py-0.5 rounded font-semibold">PRO</span>
+                                    </div>
+                                    <p class="text-slate-300 text-xs line-clamp-1">¡Transmitiendo ahora mismo! Únete al chat privado 💖</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="openModal()" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 rounded-xl text-white font-bold text-xs shadow-lg shadow-rose-500/30 flex items-center justify-center gap-1.5">
+                                        <i data-lucide="video" class="w-3.5 h-3.5"></i> Videollamada
+                                    </button>
+                                    <button onclick="openModal()" class="w-full py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl text-white font-bold text-xs border border-white/10 flex items-center justify-center gap-1.5">
+                                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> Seguir
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="beneficios" class="py-20 bg-slate-900/50 border-t border-slate-800/80 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">
+                    ¿Qué incluye tu <span class="text-rose-400">Pase VIP por 3 Meses</span>?
+                </h2>
+                <p class="text-slate-400 text-base sm:text-lg">
+                    Al descargar y actualizar la aplicación hoy mismo, desbloquearás privilegios exclusivos sin costo adicional.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Benefit 1 -->
+                <div class="bg-slate-900 border border-slate-800/80 rounded-3xl p-8 hover:border-rose-500/50 transition duration-300 group shadow-xl">
+                    <div class="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-6 group-hover:bg-rose-500 group-hover:text-white transition duration-300">
+                        <i data-lucide="layers" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Acceso Total a Contenido</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Desbloquea todas las salas de transmisión en directo, canales especiales y galerías multimedia sin restricciones de visualización.
+                    </p>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="bg-slate-900 border border-slate-800/80 rounded-3xl p-8 hover:border-rose-500/50 transition duration-300 group shadow-xl">
+                    <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 mb-6 group-hover:bg-pink-500 group-hover:text-white transition duration-300">
+                        <i data-lucide="video" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Videollamadas Ilimitadas</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Conéctate cara a cara con tus streamers y creadores favoritos mediante videollamadas privadas en alta definición y sin interrupciones.
+                    </p>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="bg-slate-900 border border-slate-800/80 rounded-3xl p-8 hover:border-rose-500/50 transition duration-300 group shadow-xl">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-6 group-hover:bg-purple-500 group-hover:text-white transition duration-300">
+                        <i data-lucide="sparkles" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Privilegios y Regalos VIP</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Destaca en el chat general con una insignia VIP dorada, envía regalos animados exclusivos y accede prioritariamente a transmisiones populares.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="instrucciones" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">
+                    ¿Cómo reclamar tus <span class="text-rose-400">3 Meses VIP</span> en 3 pasos?
+                </h2>
+                <p class="text-slate-400 text-base sm:text-lg">
+                    El proceso es rápido, seguro y automático al instalar la aplicación desde nuestra página oficial.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 relative">
+                    <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-rose-500 text-white font-extrabold flex items-center justify-center text-sm shadow-lg">1</div>
+                    <div class="text-rose-400 mb-4 mt-2">
+                        <i data-lucide="download-cloud" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Descarga el APK o App</h3>
+                    <p class="text-slate-400 text-sm">
+                        Haz clic en el botón de descarga superior para obtener la última versión actualizada directamente en tu dispositivo móvil.
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 relative">
+                    <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-rose-500 text-white font-extrabold flex items-center justify-center text-sm shadow-lg">2</div>
+                    <div class="text-rose-400 mb-4 mt-2">
+                        <i data-lucide="user-plus" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Crea tu cuenta o inicia sesión</h3>
+                    <p class="text-slate-400 text-sm">
+                        Regístrate con tu correo o red social favorita. El sistema detectará automáticamente tu descarga para aplicar la promoción.
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 relative">
+                    <div class="absolute -top-4 left-8 w-8 h-8 rounded-full bg-rose-500 text-white font-extrabold flex items-center justify-center text-sm shadow-lg">3</div>
+                    <div class="text-rose-400 mb-4 mt-2">
+                        <i data-lucide="crown" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">¡Disfruta 3 meses de VIP!</h3>
+                    <p class="text-slate-400 text-sm">
+                        Tu membresía VIP se activará en tu perfil de manera inmediata. Ya puedes entrar a todas las salas y hacer videollamadas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-slate-900/80 border-t border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-950 border border-slate-800 rounded-3xl p-8 shadow-2xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <i data-lucide="git-branch" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Guía de Despliegue en GitHub Pages</h3>
+                        <p class="text-xs text-slate-400">Sigue estos sencillos pasos para publicar esta página web en minutos.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-sm text-slate-300">
+                    <div class="flex items-start gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-rose-400 font-bold flex items-center justify-center text-xs">1</span>
+                        <div>
+                            <strong class="text-white block mb-1">Crea un repositorio en GitHub</strong>
+                            <span>Crea un nuevo repositorio público en tu cuenta de GitHub (ej. <code class="text-rose-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">streamlove-landing</code>).</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-rose-400 font-bold flex items-center justify-center text-xs">2</span>
+                        <div>
+                            <strong class="text-white block mb-1">Sube el archivo</strong>
+                            <span>Nombra este código como <code class="text-rose-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">index.html</code> y súbelo a la rama principal (main o master) de tu repositorio.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-slate-800 text-rose-400 font-bold flex items-center justify-center text-xs">3</span>
+                        <div>
+                            <strong class="text-white block mb-1">Activa GitHub Pages</strong>
+                            <span>Ve a <strong>Settings</strong> > <strong>Pages</strong> en tu repositorio. En la sección <em>Build and deployment</em>, selecciona la rama <code class="text-rose-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">main</code> y la carpeta <code class="text-rose-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">/ (root)</code>. Guarda los cambios y tu web estará online en segundos.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-950 border-t border-slate-900 py-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="w-6 h-6 rounded-lg bg-rose-500 flex items-center justify-center text-white font-bold">S</div>
+                <span class="font-bold text-slate-300">StreamLove App</span>
+            </div>
+            <p>Promoción exclusiva válida únicamente al descargar y actualizar la aplicación desde enlaces oficiales autorizados.</p>
+            <p>&copy; 2026 StreamLove. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <div id="downloadModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 text-center relative shadow-2xl animate-in fade-in zoom-in duration-200">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-600 mx-auto flex items-center justify-center text-white mb-4 shadow-lg shadow-rose-500/30">
+                <i data-lucide="download" class="w-8 h-8 animate-bounce"></i>
+            </div>
+
+            <h3 class="text-2xl font-bold text-white mb-2">Preparando descarga</h3>
+            <p id="modalPlatformText" class="text-slate-300 text-sm mb-6">Tu descarga para Android comenzará en unos segundos. ¡Tus 3 meses VIP se aplicarán automáticamente!</p>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 mb-6 text-left space-y-2">
+                <div class="flex items-center gap-2 text-xs text-emerald-400 font-semibold">
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i> Verificado y libre de malware
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-300 font-medium">
+                    <i data-lucide="gift" class="w-4 h-4 text-rose-400"></i> Bono activado: 3 Meses VIP Gratis
+                </div>
+            </div>
+
+            <button onclick="closeModal()" class="w-full py-3.5 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 rounded-xl text-white font-bold shadow-lg shadow-rose-500/30 transition">
+                Entendido, ¡Descargar Ahora!
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Modal triggers
+        function triggerDownload(platform) {
+            const modal = document.getElementById('downloadModal');
+            const platformText = document.getElementById('modalPlatformText');
+            platformText.textContent = `Iniciando descarga segura para ${platform}. ¡Tus 3 meses VIP se activarán al registrarte!`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function openModal() {
+            triggerDownload('Android / iOS');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('downloadModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Countdown timer simulation
+        let timeRemaining = 2 * 3600 + 45 * 60 + 30; // 2h 45m 30s
+        const countdownEl = document.getElementById('countdown');
+
+        setInterval(() => {
+            if (timeRemaining > 0) {
+                timeRemaining--;
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = timeRemaining % 60;
+                countdownEl.textContent = 
+                    String(hours).padStart(2, '0') + ':' + 
+                    String(minutes).padStart(2, '0') + ':' + 
+                    String(seconds).padStart(2, '0');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
